@@ -7,7 +7,7 @@ MedPath is an intelligent healthcare platform that connects patients with verifi
 
 ## Live Demo
 
-[https://diagnosify-gamma.vercel.app](https://diagnosify-gamma.vercel.app)
+[https://diagnosify-gamma.vercel.app](https://medpath-gamma.vercel.app)
 
 ## Features
 

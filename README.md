@@ -47,7 +47,7 @@ MedPath is an intelligent healthcare platform that connects patients with verifi
 1.  **Clone the repository**
     ```bash
     git clone <repository-url>
-    cd diagnosify-app
+    cd MedPath-app
     ```
 
 2.  **Install dependencies**

@@ -77,7 +77,7 @@ export async function submitAssessment(formData) {
         predictionId = result[0].id
     } catch (error) {
         console.error("Diagnosis error:", error)
-        return { error: "Failed to generate diagnosis. Please try again." }
+        return { error: error.message || "Failed to generate diagnosis. Please try again." }
     }
 
     if (predictionId) {
@@ -144,7 +144,7 @@ export async function submitTriageAssessment(data) {
         predictionId = result[0].id
     } catch (error) {
         console.error("Diagnosis error:", error)
-        return { error: "Failed to generate diagnosis. Please try again." }
+        return { error: error.message || "Failed to generate diagnosis. Please try again." }
     }
 
     if (predictionId) {

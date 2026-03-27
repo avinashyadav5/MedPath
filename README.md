@@ -3,7 +3,7 @@
 
 **Your Health Journey, Simplified.**
 
-MedPath is an intelligent healthcare platform that connects patients with verified doctors, provides AI-powered health assessments, and facilitates seamless appointment booking.
+MedPath is an intelligent healthcare platform that connects patients with verified doctors, provides AI-powered health assessments, and facilitates seamless appointment booking. Medpath connects various doctors and patients together in a single hub.
 
 ## Live Demo
 

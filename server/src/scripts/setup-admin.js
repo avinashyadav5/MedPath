@@ -1,3 +1,4 @@
+import "dotenv/config"
 import readline from "node:readline/promises"
 import { sql } from "../db.js"
 import { hashPassword } from "../lib/auth.js"

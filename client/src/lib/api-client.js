@@ -2,7 +2,30 @@
  * Thin fetch wrapper. `credentials: "include"` is what carries the session
  * cookie to the API on a different origin during development.
  */
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000"
+const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:4000").replace(/\/+$/, "")
+const TOKEN_KEY = "medpath_token"
+
+export function getToken() {
+    try {
+        return localStorage.getItem(TOKEN_KEY)
+    } catch {
+        return null
+    }
+}
+
+export function setToken(token) {
+    try {
+        if (token) {
+            localStorage.setItem(TOKEN_KEY, token)
+        } else {
+            localStorage.removeItem(TOKEN_KEY)
+        }
+    } catch {}
+}
+
+export function clearToken() {
+    setToken(null)
+}
 
 export class ApiError extends Error {
     constructor(message, status) {
@@ -13,11 +36,15 @@ export class ApiError extends Error {
 }
 
 async function request(path, { method = "GET", body, headers, raw = false } = {}) {
+    const token = getToken()
+    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {}
+
     const response = await fetch(`${BASE_URL}/api${path}`, {
         method,
         credentials: "include",
         headers: {
             ...(body !== undefined && !(body instanceof FormData) ? { "Content-Type": "application/json" } : {}),
+            ...authHeaders,
             ...headers,
         },
         body: body instanceof FormData ? body : body !== undefined ? JSON.stringify(body) : undefined,

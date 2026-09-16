@@ -3,8 +3,12 @@
  * every component that imported from there works untouched. The difference is
  * these run in the browser and talk to the Express API.
  */
-import { api, formDataToObject, formDataToObjectWithArrays } from "@/lib/api-client"
+import { api, clearToken, formDataToObject, formDataToObjectWithArrays, setToken } from "@/lib/api-client"
 import { navigateTo } from "@/lib/navigation"
+
+function notifyAuthChange(user) {
+    window.dispatchEvent(new CustomEvent("medpath:auth", { detail: user }))
+}
 
 export async function register(formData) {
     const { name, email, password, role } = formDataToObject(formData)
@@ -14,7 +18,8 @@ export async function register(formData) {
 
     try {
         const result = await api.post("/auth/register", { name, email, password, role })
-        // stands in for the server action's redirect()
+        if (result?.token) setToken(result.token)
+        if (result?.user) notifyAuthChange(result.user)
         navigateTo(result.redirectTo, { replace: true })
         return result
     } catch (error) {
@@ -27,7 +32,10 @@ export async function login(formData) {
     if (!email || !password) return { error: "Email and password are required" }
 
     try {
-        return await api.post("/auth/login", { email, password })
+        const result = await api.post("/auth/login", { email, password })
+        if (result?.token) setToken(result.token)
+        if (result?.user) notifyAuthChange(result.user)
+        return result
     } catch (error) {
         return { error: error.message }
     }
@@ -37,6 +45,8 @@ export async function logout() {
     try {
         await api.post("/auth/logout")
     } finally {
+        clearToken()
+        notifyAuthChange(null)
         navigateTo("/", { replace: true })
     }
 }

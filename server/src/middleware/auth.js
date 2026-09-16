@@ -5,7 +5,9 @@ import { SESSION_COOKIE, verifyToken } from "../lib/auth.js"
  * decoded JWT payload on `req.user` (or null). Never rejects — route guards do that.
  */
 export async function attachUser(req, _res, next) {
-    const token = req.cookies?.[SESSION_COOKIE]
+    const authHeader = req.headers.authorization
+    const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7).trim() : null
+    const token = bearerToken || req.cookies?.[SESSION_COOKIE]
     req.user = token ? await verifyToken(token) : null
     next()
 }

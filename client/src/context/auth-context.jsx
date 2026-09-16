@@ -22,6 +22,15 @@ export function AuthProvider({ children }) {
         refresh()
     }, [refresh])
 
+    useEffect(() => {
+        function handleAuth(e) {
+            setUser(e.detail)
+            setLoading(false)
+        }
+        window.addEventListener("medpath:auth", handleAuth)
+        return () => window.removeEventListener("medpath:auth", handleAuth)
+    }, [])
+
     const value = useMemo(() => ({ user, loading, refresh, setUser }), [user, loading, refresh])
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

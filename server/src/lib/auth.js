@@ -69,7 +69,7 @@ export async function createSession(res, user) {
 }
 
 export function destroySession(res) {
-    res.clearCookie(SESSION_COOKIE, { path: "/" })
+    res.clearCookie(SESSION_COOKIE, cookieOptions())
 }
 
 export async function registerUser(name, email, password, role) {

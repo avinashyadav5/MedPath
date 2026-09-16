@@ -1,3 +1,4 @@
+import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { Router } from "express"
@@ -6,6 +7,7 @@ import { requireAuth } from "../middleware/auth.js"
 
 const router = Router()
 const uploadsDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../../uploads")
+fs.mkdirSync(uploadsDir, { recursive: true })
 
 /**
  * was: app/api/upload/route.js — Next parsed FormData itself; Express needs multer.

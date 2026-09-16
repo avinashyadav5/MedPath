@@ -26,10 +26,11 @@ router.post(
             return res.status(400).json({ error: error || "Registration failed" })
         }
 
-        await createSession(res, user)
+        const token = await createSession(res, user)
 
         res.json({
             success: true,
+            token,
             user: { id: user.id, name: user.name, email: user.email, role: user.role },
             redirectTo: role === "doctor" ? "/doctor/onboarding" : "/patient/assessment",
         })
@@ -50,7 +51,7 @@ router.post(
             return res.status(401).json({ error: error || "Login failed" })
         }
 
-        await createSession(res, user)
+        const token = await createSession(res, user)
 
         const redirectTo =
             user.role === "admin"
@@ -59,7 +60,7 @@ router.post(
                     ? "/doctor/dashboard"
                     : "/patient/assessment"
 
-        res.json({ success: true, user, redirectTo })
+        res.json({ success: true, token, user, redirectTo })
     })
 )
 

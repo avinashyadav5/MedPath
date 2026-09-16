@@ -22,11 +22,29 @@ import videoRoutes from "./routes/video.js"
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 
-const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173"
+const configuredOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
+    .split(",")
+    .map((o) => o.trim().replace(/\/+$/, ""))
+    .filter(Boolean)
 
-// credentials:true is what lets the session cookie travel between
-// the Vite dev server (5173) and this API (4000).
-app.use(cors({ origin: clientOrigin, credentials: true }))
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            if (!origin) return callback(null, true)
+            const cleanOrigin = origin.replace(/\/+$/, "")
+            if (
+                configuredOrigins.includes(cleanOrigin) ||
+                cleanOrigin.startsWith("http://localhost:") ||
+                cleanOrigin.startsWith("http://127.0.0.1:") ||
+                /\.vercel\.app$/.test(new URL(origin).hostname)
+            ) {
+                return callback(null, true)
+            }
+            return callback(new Error(`CORS origin ${origin} not allowed`))
+        },
+        credentials: true,
+    })
+)
 app.use(express.json({ limit: "2mb" }))
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())

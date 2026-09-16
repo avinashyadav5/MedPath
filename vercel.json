@@ -1,8 +1,0 @@
-﻿{
-  "env": {
-    "VITE_API_URL": "https://medpath-wbxy.onrender.com"
-  },
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}

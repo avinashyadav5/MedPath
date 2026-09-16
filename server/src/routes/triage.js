@@ -52,16 +52,32 @@ router.post(
 
         const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || process.env.GROQ_API })
 
+        const primaryModel = process.env.GROQ_MODEL || "openai/gpt-oss-120b"
+        const fallbackModel = "openai/gpt-oss-20b"
+
+        const requestParams = {
+            messages: [
+                { role: "system", content: systemPrompt },
+                ...messages.map((msg) => ({ role: msg.role, content: msg.content })),
+            ],
+            temperature: 0.7,
+            max_tokens: 1024,
+        }
+
         try {
-            const completion = await groq.chat.completions.create({
-                model: process.env.GROQ_MODEL || "llama3-70b-8192",
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    ...messages.map((msg) => ({ role: msg.role, content: msg.content })),
-                ],
-                temperature: 0.7,
-                max_tokens: 1024,
-            })
+            let completion
+            try {
+                completion = await groq.chat.completions.create({
+                    ...requestParams,
+                    model: primaryModel,
+                })
+            } catch (primaryErr) {
+                console.warn(`Triage primary model ${primaryModel} failed (${primaryErr.message}), trying fallback ${fallbackModel}...`)
+                completion = await groq.chat.completions.create({
+                    ...requestParams,
+                    model: fallbackModel,
+                })
+            }
 
             res.type("text/plain; charset=utf-8")
             res.send(completion.choices[0]?.message?.content || "")

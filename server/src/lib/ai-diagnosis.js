@@ -64,7 +64,10 @@ Return ONLY a valid JSON object with ALL of these fields (use empty arrays if no
 }`
 
     try {
-        const completion = await groq.chat.completions.create({
+        const primaryModel = process.env.GROQ_MODEL || "openai/gpt-oss-120b"
+        const fallbackModel = "openai/gpt-oss-20b"
+
+        const requestParams = {
             messages: [
                 {
                     role: "system",
@@ -75,11 +78,24 @@ Return ONLY a valid JSON object with ALL of these fields (use empty arrays if no
                     content: systemPrompt
                 }
             ],
-            model: process.env.GROQ_MODEL || "llama3-70b-8192", // Universally available on free Groq tier
             temperature: 0.3,
             max_tokens: 2048,
             response_format: { type: "json_object" }
-        })
+        }
+
+        let completion
+        try {
+            completion = await groq.chat.completions.create({
+                ...requestParams,
+                model: primaryModel
+            })
+        } catch (primaryErr) {
+            console.warn(`Primary model ${primaryModel} failed (${primaryErr.message}), trying fallback ${fallbackModel}...`)
+            completion = await groq.chat.completions.create({
+                ...requestParams,
+                model: fallbackModel
+            })
+        }
 
         const text = completion.choices[0]?.message?.content
 

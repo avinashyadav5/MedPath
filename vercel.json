@@ -3,6 +3,9 @@
   "outputDirectory": "client/dist",
   "installCommand": "echo 'skip root install'",
   "framework": null,
+  "env": {
+    "VITE_API_URL": "https://medpath-wbxy.onrender.com"
+  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

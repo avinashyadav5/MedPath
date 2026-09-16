@@ -5,15 +5,16 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "dev": "node --watch --env-file=.env src/index.js",
-    "start": "node --env-file=.env src/index.js",
-    "migrate": "node --env-file=.env src/scripts/migrate.js",
-    "setup-admin": "node --env-file=.env src/scripts/setup-admin.js"
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "migrate": "node src/scripts/migrate.js",
+    "setup-admin": "node src/scripts/setup-admin.js"
   },
   "dependencies": {
     "@neondatabase/serverless": "1.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
     "express": "^4.21.2",
     "groq-sdk": "^0.37.0",
     "jose": "6.1.3",

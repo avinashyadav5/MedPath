@@ -1,7 +1,9 @@
+import "dotenv/config"
 import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { sql } from "../db.js"
+
 
 const sqlDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../../sql")
 

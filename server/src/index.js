@@ -32,15 +32,22 @@ app.use(
         origin: (origin, callback) => {
             if (!origin) return callback(null, true)
             const cleanOrigin = origin.replace(/\/+$/, "")
-            if (
-                configuredOrigins.includes(cleanOrigin) ||
-                cleanOrigin.startsWith("http://localhost:") ||
-                cleanOrigin.startsWith("http://127.0.0.1:") ||
-                /\.vercel\.app$/.test(new URL(origin).hostname)
-            ) {
-                return callback(null, true)
+            try {
+                const url = new URL(origin)
+                if (
+                    configuredOrigins.includes(cleanOrigin) ||
+                    cleanOrigin.startsWith("http://localhost:") ||
+                    cleanOrigin.startsWith("http://127.0.0.1:") ||
+                    /\.vercel\.app$/.test(url.hostname)
+                ) {
+                    return callback(null, true)
+                }
+            } catch {
+                if (configuredOrigins.includes(cleanOrigin)) {
+                    return callback(null, true)
+                }
             }
-            return callback(new Error(`CORS origin ${origin} not allowed`))
+            return callback(null, false)
         },
         credentials: true,
     })
@@ -86,5 +93,5 @@ app.use((err, _req, res, _next) => {
 const port = Number(process.env.PORT) || 4000
 app.listen(port, () => {
     console.log(`MedPath API listening on http://localhost:${port}`)
-    console.log(`CORS origin: ${clientOrigin}`)
+    console.log(`CORS allowed origins:`, configuredOrigins)
 })
